@@ -90,9 +90,9 @@
     datos.xp = datos.xp - 100;
       }
       input.value = ''; render(); guardar();
-    }
-    function completarTarea(index) {
-  if(!datos.tareas[index].hecha) {
+    
+  function completarTarea(index) {
+   if(!datos.tareas[index].hecha) {
     datos.tareas[index].hecha = true;
     datos.xp += 20 * datos.racha;
 
@@ -100,12 +100,12 @@
       datos.nivel++;
       datos.xp = datos.xp - 100;
     
-    guardar();//
+    guardar();
   }
-  render();//
+  render();
     }
     
-    function comprar(precio) {
+      function comprar(precio) {
       if(datos.xp >= precio) {
         datos.xp -= precio;
         const item = precio === 50? 'Escudo' : 'Espada Legendaria';
