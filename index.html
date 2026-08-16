@@ -40,6 +40,7 @@
       justify-content: space-around;
       margin: 20px 0;
       font-size: 18px;
+      text-align: center;
     }
     input, button {
       width: 100%;
@@ -48,77 +49,9 @@
       border-radius: 10px;
       border: none;
       font-size: 16px;
+      box-sizing: border-box;
     }
     button {
       background: #ff00ff;
       color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px #ff00ff;
-    }
-    .mision {
-      background: rgba(255,255,255,0.1);
-      padding: 10px;
-      border-radius: 10px;
-      margin: 10px 0;
-      display: flex;
-      justify-content: space-between;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>⚔️ LIFEQUEST ⚔️</h1>
-    <div class="stats">
-      <div>Nivel: <b id="nivel">1</b></div>
-      <div>XP: <b id="xp">0</b></div>
-      <div>Racha: <b id="racha">0</b> 🔥</div>
-    </div>
-    
-    <input type="text" id="mision" placeholder="Escribe tu misión épica...">
-    <button onclick="agregarMision()">+ Añadir Misión</button>
-    
-    <div id="listaMisiones"></div>
-  </div>
-
-<script>
-let data = JSON.parse(localStorage.getItem('lifequest')) || {nivel:1, xp:0, racha:0, misiones:[]};
-
-function guardar(){ localStorage.setItem('lifequest', JSON.stringify(data)); }
-
-function render(){
-  document.getElementById('nivel').innerText = data.nivel;
-  document.getElementById('xp').innerText = data.xp;
-  document.getElementById('racha').innerText = data.racha;
-  document.getElementById('listaMisiones').innerHTML = data.misiones.map((m,i)=>`
-    <div class="mision">
-      <span>${m}</span>
-      <button onclick="completar(${i})">✓</button>
-    </div>
-  `).join('');
-}
-
-function agregarMision(){
-  let m = document.getElementById('mision').value;
-  if(m){ data.misiones.push(m); document.getElementById('mision').value=''; guardar(); render(); }
-}
-
-function completar(i){
-  data.misiones.splice(i,1);
-  data.xp += 10;
-  if(data.xp >= data.nivel * 50){ data.nivel++; data.xp=0; alert('¡SUBISTE A NIVEL '+data.nivel+'! 👑'); }
-  data.racha++;
-  guardar(); render();
-}
-
-render();
-
-// Registrar Service Worker
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
-</script>
-</body>
-</html>
+      font-weight:
