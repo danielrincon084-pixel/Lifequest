@@ -59,10 +59,11 @@
       document.getElementById('nivel').innerText = datos.nivel;
       document.getElementById('xp').innerText = datos.xp;
     }
+    
     function agregarTarea() {
       const input = document.getElementById('tarea');
       if(input.value.trim() === '') return;
-      datos.tareas.push({texto: input.value, hecha: false});
+      datos.tareas.push({texto: input.value, hecha: false}); // hecha: false = sin chilito
       datos.xp += 10;
       if(datos.xp >= 100) { datos.nivel++; datos.xp = 0; }
       input.value = '';
@@ -70,11 +71,23 @@
       guardar();
     }
     
+    function completarTarea(index) {
+      if(!datos.tareas[index].hecha) {
+        datos.tareas[index].hecha = true; // Le ponemos el chilito
+        datos.xp += 20; // CHILITO = +20 XP en vez de 10
+        if(datos.xp >= 100) { datos.nivel++; datos.xp = 0; }
+        guardar();
+      }
+      render();
+    }
+    
     function render() {
       const lista = document.getElementById('lista');
       lista.innerHTML = '';
-      datos.tareas.forEach(t => {
-        lista.innerHTML += `<li>${t.texto}</li>`;
+      datos.tareas.forEach((t, i) => {
+        const chilito = t.hecha? '🌶️' : '⬜';
+        const estilo = t.hecha? 'text-decoration: line-through; opacity: 0.6;' : 'cursor: pointer;';
+        lista.innerHTML += `<li onclick="completarTarea(${i})" style="${estilo} padding: 8px; margin: 5px 0; background: rgba(255,255,255,0.1); border-radius: 8px;">${chilito} ${t.texto}</li>`;
       });
     }
     
@@ -85,5 +98,3 @@
     render();
     guardar();
   </script>
-</body>
-</html>
