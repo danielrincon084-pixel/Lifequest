@@ -85,18 +85,26 @@
       if(input.value.trim() === '') return;
       datos.tareas.push({texto: input.value, hecha: false});
       datos.xp += 10 * datos.racha;
-      if(datos.xp >= 100) { datos.nivel++; datos.xp = 0; }
+      while(datos.xp >= 100) {
+    datos.nivel++;
+    datos.xp = datos.xp - 100;
+      }
       input.value = ''; render(); guardar();
     }
-
     function completarTarea(index) {
-      if(!datos.tareas[index].hecha) {
-        datos.tareas[index].hecha = true;
-        datos.xp += 20 * datos.racha;
-        if(datos.xp >= 100) { datos.nivel++; datos.xp = 0; }
-        guardar();
-      }
-      render();
+  if(!datos.tareas[index].hecha) {
+    datos.tareas[index].hecha = true;
+    datos.xp += 20 * datos.racha;
+
+    while(datos.xp >= 100) {
+      datos.nivel++;
+      datos.xp = datos.xp - 100;
+    }
+
+    guardar();
+  }
+  render();
+    }
     }
 
     function comprar(precio) {
