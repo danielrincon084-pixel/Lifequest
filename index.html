@@ -1,202 +1,124 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LifeQuest - Gamifica tu día</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LifeQuest</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#6a11cb">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
+    
     body {
-        font-family: 'Arial', sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        margin: 0;
-        padding: 20px;
+      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+      color: white;
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
     }
     .container {
-        max-width: 600px;
-        margin: auto;
-        background: rgba(0,0,0,0.3);
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      max-width: 500px;
+      margin: auto;
+      background: rgba(0,0,0,0.3);
+      padding: 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(106,17,203,0.5);
     }
-    .header {
-        text-align: center;
-        margin-bottom: 20px;
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      text-shadow: 0 0 10px #fff;
+      animation: glow 2s infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #fff; }
+      to { text-shadow: 0 0 20px #2575fc; }
     }
     .stats {
-        display: flex;
-        justify-content: space-around;
-        background: rgba(255,255,255,0.1);
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 20px;
+      display: flex;
+      justify-content: space-around;
+      margin: 20px 0;
+      font-size: 18px;
     }
-    .stat h2 { margin: 5px 0; font-size: 24px; }
-    .stat p { margin: 0; font-size: 12px; opacity: 0.8; }
-    .progress-bar {
-        height: 10px;
-        background: rgba(255,255,255,0.2);
-        border-radius: 5px;
-        overflow: hidden;
-        margin-top: 5px;
-    }
-    .progress {
-        height: 100%;
-        background: #4ade80;
-        width: 0%;
-        transition: width 0.5s;
-    }
-    input {
-        width: 70%;
-        padding: 12px;
-        border: none;
-        border-radius: 10px;
-        margin-right: 10px;
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
     }
     button {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 10px;
-        background: #4ade80;
-        color: #1a1a1a;
-        font-weight: bold;
-        cursor: pointer;
+      background: #ff00ff;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
     }
-    button:hover { background: #22c55e; }
-    .task {
-        background: rgba(255,255,255,0.1);
-        padding: 15px;
-        margin: 10px 0;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        transition: 0.3s;
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #ff00ff;
     }
-    .task:hover { background: rgba(255,255,255,0.2); }
-    .task.done {
-        text-decoration: line-through;
-        opacity: 0.5;
+    .mision {
+      background: rgba(255,255,255,0.1);
+      padding: 10px;
+      border-radius: 10px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
     }
-    .xp-gain {
-        color: #4ade80;
-        font-weight: bold;
-        animation: pop 0.5s;
-    }
-    @keyframes pop {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.5); }
-        100% { transform: scale(1); }
-    }
-</style>
+  </style>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>⚔️ LifeQuest</h1>
-        <p>Convierte tu día en una aventura</p>
-    </div>
-
+  <div class="container">
+    <h1>⚔️ LIFEQUEST ⚔️</h1>
     <div class="stats">
-        <div class="stat">
-            <h2 id="level">1</h2>
-            <p>NIVEL</p>
-            <div class="progress-bar"><div class="progress" id="level-progress"></div></div>
-        </div>
-        <div class="stat">
-            <h2 id="xp">0</h2>
-            <p>XP</p>
-        </div>
-        <div class="stat">
-            <h2 id="streak">0</h2>
-            <p>RACHA</p>
-        </div>
+      <div>Nivel: <b id="nivel">1</b></div>
+      <div>XP: <b id="xp">0</b></div>
+      <div>Racha: <b id="racha">0</b> 🔥</div>
     </div>
-
-    <div>
-        <input type="text" id="taskInput" placeholder="Nueva misión... Ej: Hacer ejercicio">
-        <button onclick="addTask()">+ Añadir</button>
-    </div>
-
-    <div id="taskList"></div>
-</div>
+    
+    <input type="text" id="mision" placeholder="Escribe tu misión épica...">
+    <button onclick="agregarMision()">+ Añadir Misión</button>
+    
+    <div id="listaMisiones"></div>
+  </div>
 
 <script>
-let data = JSON.parse(localStorage.getItem('lifequest')) || {
-    xp: 0,
-    level: 1,
-    streak: 0,
-    tasks: []
-};
+let data = JSON.parse(localStorage.getItem('lifequest')) || {nivel:1, xp:0, racha:0, misiones:[]};
 
-function save() {
-    localStorage.setItem('lifequest', JSON.stringify(data));
+function guardar(){ localStorage.setItem('lifequest', JSON.stringify(data)); }
+
+function render(){
+  document.getElementById('nivel').innerText = data.nivel;
+  document.getElementById('xp').innerText = data.xp;
+  document.getElementById('racha').innerText = data.racha;
+  document.getElementById('listaMisiones').innerHTML = data.misiones.map((m,i)=>`
+    <div class="mision">
+      <span>${m}</span>
+      <button onclick="completar(${i})">✓</button>
+    </div>
+  `).join('');
 }
 
-function xpNeeded() {
-    return data.level * 100;
+function agregarMision(){
+  let m = document.getElementById('mision').value;
+  if(m){ data.misiones.push(m); document.getElementById('mision').value=''; guardar(); render(); }
 }
 
-function updateStats() {
-    document.getElementById('xp').innerText = data.xp;
-    document.getElementById('level').innerText = data.level;
-    document.getElementById('streak').innerText = data.streak;
-    
-    let progress = (data.xp % xpNeeded()) / xpNeeded() * 100;
-    document.getElementById('level-progress').style.width = progress + '%';
-
-    if(data.xp >= xpNeeded()) {
-        data.level++;
-        data.xp = 0;
-        alert(`¡SUBISTE A NIVEL ${data.level}! 🎉`);
-        updateStats();
-    }
+function completar(i){
+  data.misiones.splice(i,1);
+  data.xp += 10;
+  if(data.xp >= data.nivel * 50){ data.nivel++; data.xp=0; alert('¡SUBISTE A NIVEL '+data.nivel+'! 👑'); }
+  data.racha++;
+  guardar(); render();
 }
 
-function addTask() {
-    let input = document.getElementById('taskInput');
-    if(input.value.trim() === '') return;
-    data.tasks.push({text: input.value, done: false, xp: 25});
-    input.value = '';
-    renderTasks();
-    save();
-}
+render();
 
-function completeTask(index) {
-    if(!data.tasks[index].done) {
-        data.tasks[index].done = true;
-        data.xp += data.tasks[index].xp;
-        showXPGain(`+${data.tasks[index].xp} XP`);
-        updateStats();
-        renderTasks();
-        save();
-    }
-}
-
-function showXPGain(text) {
-    let el = document.createElement('div');
-    el.className = 'xp-gain';
-    el.innerText = text;
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1000);
-}
-
-function renderTasks() {
-    let list = document.getElementById('taskList');
-    list.innerHTML = '';
-    data.tasks.forEach((task, i) => {
-        list.innerHTML += `
-            <div class="task ${task.done ? 'done' : ''}" onclick="completeTask(${i})">
-                <span>📝 ${task.text}</span>
-                <span>+${task.xp} XP</span>
-            </div>
-        `;
-    });
-}
-
-renderTasks();
-updateStats();
+// Registrar Service Worker
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
 </script>
 </body>
-</html>  
+</html>
