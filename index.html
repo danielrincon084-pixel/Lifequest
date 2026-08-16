@@ -59,4 +59,31 @@
       document.getElementById('nivel').innerText = datos.nivel;
       document.getElementById('xp').innerText = datos.xp;
     }
+    function agregarTarea() {
+      const input = document.getElementById('tarea');
+      if(input.value.trim() === '') return;
+      datos.tareas.push({texto: input.value, hecha: false});
+      datos.xp += 10;
+      if(datos.xp >= 100) { datos.nivel++; datos.xp = 0; }
+      input.value = '';
+      render();
+      guardar();
+    }
     
+    function render() {
+      const lista = document.getElementById('lista');
+      lista.innerHTML = '';
+      datos.tareas.forEach(t => {
+        lista.innerHTML += `<li>${t.texto}</li>`;
+      });
+    }
+    
+    if('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+    
+    render();
+    guardar();
+  </script>
+</body>
+</html>
