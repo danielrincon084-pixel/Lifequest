@@ -8,93 +8,147 @@
   <meta name="theme-color" content="#6a11cb">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
-    body {
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-      color: white;
-      font-family: 'Roboto', sans-serif;
-      margin: 0;
-      padding: 20px;
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 500px;
-      margin: auto;
-      background: rgba(0,0,0,0.3);
-      padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(106,17,203,0.5);
-    }
-    h1 {
-      font-family: 'Orbitron', sans-serif;
-      text-align: center;
-      text-shadow: 0 0 10px #fff;
-      animation: glow 2s infinite alternate;
-    }
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #fff; }
-      to { text-shadow: 0 0 20px #2575fc; }
-    }
-    .stats { display: flex; justify-content: space-around; margin: 20px 0; font-size: 18px; text-align: center; }
+    :root { --bg1: #6a11cb; --bg2: #2575fc; --card: rgba(0,0,0,0.3); }
+    body.dark { --bg1: #0f0f1a; --bg2: #1a1a2e; --card: rgba(255,255,255,0.05); }
+
+    body { background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%); color: white; font-family: 'Roboto', sans-serif; margin: 0; padding: 20px; min-height: 100vh; transition: 0.3s; }
+   .container { max-width: 500px; margin: auto; background: var(--card); padding: 20px; border-radius: 20px; box-shadow: 0 0 20px rgba(106,17,203,0.5); }
+    h1 { font-family: 'Orbitron', sans-serif; text-align: center; text-shadow: 0 0 10px #fff; }
+   .topbar { display: flex; justify-content: space-between; align-items: center; }
+   .stats { display: flex; justify-content: space-around; margin: 20px 0; font-size: 16px; text-align: center; }
+   .racha { font-size: 20px; }
     input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: none; font-size: 16px; box-sizing: border-box; }
     button { background: #ff00ff; color: white; font-weight: bold; cursor: pointer; }
+    button:disabled { background: gray; cursor: not-allowed; }
+   .tienda { margin-top: 20px; padding: 15px; border: 2px dashed #ff00ff; border-radius: 15px; }
+   .backup { margin-top: 15px; display: flex; gap: 10px; }
+   .backup button { background: #00ff88; }
+    li { list-style: none; padding: 10px; margin: 5px 0; background: rgba(255,255,255,0.1); border-radius: 8px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>⚔️ LifeQuest ⚔️</h1>
+    <div class="topbar">
+      <h1>⚔️ LifeQuest ⚔️</h1>
+      <button onclick="toggleModo()" style="width: 50px;">🌙</button>
+    </div>
+
     <div class="stats">
       <div>Nivel: <span id="nivel">1</span></div>
       <div>XP: <span id="xp">0</span></div>
+      <div class="racha">Racha: <span id="racha">0</span>🔥</div>
     </div>
+
     <input type="text" id="tarea" placeholder="¿Qué misión harás hoy?">
     <button onclick="agregarTarea()">+ Agregar Misión</button>
     <ul id="lista"></ul>
+
+    <div class="tienda">
+      <h3>🏪 TIENDA</h3>
+      <button onclick="comprar(50)">Escudo +1 <span id="precio1">50</span> XP</button>
+      <button onclick="comprar(100)">Espada Legendaria <span id="precio2">100</span> XP</button>
+      <p>Inventario: <span id="inventario">Nada</span></p>
+    </div>
+
+    <div class="backup">
+      <button onclick="exportar()">📥 Exportar</button>
+      <button onclick="document.getElementById('fileInput').click()">📤 Importar</button>
+      <input type="file" id="fileInput" style="display:none" onchange="importar(event)">
+    </div>
   </div>
 
   <script>
-    let datos = JSON.parse(localStorage.getItem('lifequest')) || {nivel: 1, xp: 0, tareas: []};
-    
+    let datos = JSON.parse(localStorage.getItem('lifequest')) || {
+      nivel: 1, xp: 0, tareas: [], racha: 0, ultimoDia: '', inventario: []
+    };
+
     function guardar() {
       localStorage.setItem('lifequest', JSON.stringify(datos));
       document.getElementById('nivel').innerText = datos.nivel;
       document.getElementById('xp').innerText = datos.xp;
+      document.getElementById('racha').innerText = datos.racha;
+      document.getElementById('inventario').innerText = datos.inventario.join(', ') || 'Nada';
     }
-    
+
+    function checkRacha() {
+      const hoy = new Date().toDateString();
+      if(datos.ultimoDia!== hoy) {
+        const ayer = new Date(); ayer.setDate(ayer.getDate()-1);
+        if(datos.ultimoDia === ayer.toDateString()) { datos.racha++; }
+        else { datos.racha = 1; }
+        datos.ultimoDia = hoy;
+      }
+    }
+
     function agregarTarea() {
       const input = document.getElementById('tarea');
       if(input.value.trim() === '') return;
-      datos.tareas.push({texto: input.value, hecha: false}); // hecha: false = sin chilito
-      datos.xp += 10;
+      datos.tareas.push({texto: input.value, hecha: false});
+      datos.xp += 10 * datos.racha;
       if(datos.xp >= 100) { datos.nivel++; datos.xp = 0; }
-      input.value = '';
-      render();
-      guardar();
+      input.value = ''; render(); guardar();
     }
-    
+
     function completarTarea(index) {
       if(!datos.tareas[index].hecha) {
-        datos.tareas[index].hecha = true; // Le ponemos el chilito
-        datos.xp += 20; // CHILITO = +20 XP en vez de 10
+        datos.tareas[index].hecha = true;
+        datos.xp += 20 * datos.racha;
         if(datos.xp >= 100) { datos.nivel++; datos.xp = 0; }
         guardar();
       }
       render();
     }
-    
+
+    function comprar(precio) {
+      if(datos.xp >= precio) {
+        datos.xp -= precio;
+        const item = precio === 50? 'Escudo' : 'Espada Legendaria';
+        datos.inventario.push(item);
+        alert(`¡Compraste ${item}!`);
+        guardar(); render();
+      } else { alert('No tienes suficiente XP 😭'); }
+    }
+
+    function toggleModo() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('modo', document.body.classList.contains('dark')? 'dark' : 'light');
+    }
+
+    function exportar() {
+      const blob = new Blob([JSON.stringify(datos, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `LifeQuest-Backup-${new Date().toLocaleDateString()}.json`;
+      a.click();
+      alert('¡Backup descargado! Guárdalo en Drive 📁');
+    }
+
+    function importar(event) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        datos = JSON.parse(e.target.result);
+        guardar(); render();
+        alert('¡Progreso importado! Bienvenido de vuelta guerrero ⚔️');
+      };
+      reader.readAsText(file);
+    }
+
     function render() {
       const lista = document.getElementById('lista');
       lista.innerHTML = '';
       datos.tareas.forEach((t, i) => {
         const chilito = t.hecha? '🌶️' : '⬜';
         const estilo = t.hecha? 'text-decoration: line-through; opacity: 0.6;' : 'cursor: pointer;';
-        lista.innerHTML += `<li onclick="completarTarea(${i})" style="${estilo} padding: 8px; margin: 5px 0; background: rgba(255,255,255,0.1); border-radius: 8px;">${chilito} ${t.texto}</li>`;
+        lista.innerHTML += `<li onclick="completarTarea(${i})" style="${estilo}">${chilito} ${t.texto}</li>`;
       });
     }
-    
-    if('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js');
-    }
-    
-    render();
-    guardar();
+
+    if(localStorage.getItem('modo') === 'dark') document.body.classList.add('dark');
+    checkRacha();
+    if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+    render(); guardar();
   </script>
+</body>
+</html>
