@@ -99,14 +99,12 @@
     while(datos.xp >= 100) {
       datos.nivel++;
       datos.xp = datos.xp - 100;
-    }
-
-    guardar();
+    
+    guardar();//
   }
-  render();
+  render();//
     }
-    }
-
+    
     function comprar(precio) {
       if(datos.xp >= precio) {
         datos.xp -= precio;
