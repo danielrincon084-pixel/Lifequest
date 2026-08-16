@@ -8,7 +8,6 @@
   <meta name="theme-color" content="#6a11cb">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto&display=swap');
-    
     body {
       background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
       color: white;
@@ -35,23 +34,29 @@
       from { text-shadow: 0 0 10px #fff; }
       to { text-shadow: 0 0 20px #2575fc; }
     }
-    .stats {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      font-size: 18px;
-      text-align: center;
+    .stats { display: flex; justify-content: space-around; margin: 20px 0; font-size: 18px; text-align: center; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: none; font-size: 16px; box-sizing: border-box; }
+    button { background: #ff00ff; color: white; font-weight: bold; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>⚔️ LifeQuest ⚔️</h1>
+    <div class="stats">
+      <div>Nivel: <span id="nivel">1</span></div>
+      <div>XP: <span id="xp">0</span></div>
+    </div>
+    <input type="text" id="tarea" placeholder="¿Qué misión harás hoy?">
+    <button onclick="agregarTarea()">+ Agregar Misión</button>
+    <ul id="lista"></ul>
+  </div>
+
+  <script>
+    let datos = JSON.parse(localStorage.getItem('lifequest')) || {nivel: 1, xp: 0, tareas: []};
+    
+    function guardar() {
+      localStorage.setItem('lifequest', JSON.stringify(datos));
+      document.getElementById('nivel').innerText = datos.nivel;
+      document.getElementById('xp').innerText = datos.xp;
     }
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-    button {
-      background: #ff00ff;
-      color: white;
-      font-weight:
+    
